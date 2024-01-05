@@ -19,10 +19,13 @@
   "dependencies": {
     "@react-three/drei": "^9.88.17",
     "@react-three/fiber": "^8.15.11",
+    "glslify": "^7.1.1",
+    "glslify-loader": "^2.0.0",
     "leva": "^0.9.35",
     "r3f-perf": "^7.1.2",
     "react": "18.2",
     "react-dom": "18.2",
-    "three": "^0.158.0"
+    "three": "^0.158.0",
+    "vite-plugin-glslify": "^2.0.2"
   }
 }
