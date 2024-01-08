@@ -19,7 +19,7 @@ export default function FBOon() {
           () => ({
                time: { value: 0 },
                positionTexture: { value: null },
-               resolution: { value: new THREE.Vector4() }
+               // resolution: { value: new THREE.Vector4() }
           }),
           []
      )
@@ -76,16 +76,17 @@ export default function FBOon() {
                console.error(error)
           }
 
-          for (let i = 0; i < width * width * 4; i++) {
+          for (let i = 0; i < width * width; i++) {
                let i3 = i * 3
 
                dtPosition.image.data[i3 + 0] = Math.random()
-               dtPosition.image.data[i3 + 1] = Math.random() * 5.0
-               dtPosition.image.data[i3 + 2] = Math.random() * 5.0
-               dtPosition.image.data[i3 + 3] = 1
+               dtPosition.image.data[i3 + 1] = Math.random() 
+               dtPosition.image.data[i3 + 2] = Math.random() 
+               dtPosition.image.data[i3 + 3] = 100
           }
 
           dtPosition.needsUpdate = true
+          console.log("dtPosition.image.data.length:", dtPosition.image.data)
 
           return {
                gpuCompute: gpuCompute,
@@ -107,8 +108,9 @@ export default function FBOon() {
      
 
      useEffect(() => {
-          //
      }, [])
+
+
 
      return (
           <>

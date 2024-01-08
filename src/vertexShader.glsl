@@ -4,7 +4,6 @@
 
 // attribute vec2 reference;
 
-
 // void main() {
 
 //     vUv = reference;
@@ -17,18 +16,17 @@
 //     gl_Position = projectionMatrix * mvPosition;
 // }
 
-
 varying vec2 vUv;
 
 uniform sampler2D positionTexture;
 
 attribute vec2 reference;
 
-
 void main() {
 
     vUv = reference;
-    vec3 pos = texture2D(positionTexture, reference).xyz;
+    vec3 pos = texture(positionTexture, reference).xyz;
+    pos = pos * position;
 
     vec4 mvPosition = modelViewMatrix * vec4(pos, 1.);
 
