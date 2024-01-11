@@ -1,5 +1,6 @@
 import { OrbitControls } from '@react-three/drei'
 import FBOon from './fboOn'
+import ProtoTipo from './ProtoTipo'
 
 export default function Experience() {
      return (

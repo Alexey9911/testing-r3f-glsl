@@ -1,21 +1,48 @@
-import { GPUComputationRenderer } from 'three/examples/jsm/misc/GPUComputationRenderer.js'
-
 import vertexShader from './vertexShader.glsl'
 import fragmentShader from './fragmentShader.glsl'
 import fragmentSimulation from './fragmentSimulation.glsl'
 import * as THREE from 'three'
+import { GPUComputationRenderer } from 'three/examples/jsm/misc/GPUComputationRenderer.js'
 
 import { useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useMemo, useRef } from 'react'
 
-export default function FBOon() {
+import { useCallback, useMemo, useRef } from 'react'
+import { render } from 'react-dom'
+
+export default function ProtoTipo() {
      // * ----> Some important Variables
      const width = 32
      const { gl } = useThree()
      const pointsRef = useRef()
 
+     const uniforms = useCallback(() => {
+          // let a = 10
+          // a = a + 1
+          // console.log(a )
+          return {
+               time: { value: 0.0 },
+               positionTexture: { type: 't', value: null },
+               resolution: { value: new THREE.Vector4() }
+          }
+     }, [])
+
+     // const abc = useCallback(() => {
+     //      const a =  {
+     //           ab: { value: 200 }
+     //      }
+     //      const b = 2000
+     //      return {a, b}
+     // }, [])
+
+     // console.log(abc().a.ab)
+
      // $ ----> Prepare GP GPU
-     const gpuCompute = useMemo(() => {
+
+     // * ----.
+
+     // $ ----> Main Material / Uniforms / Fill
+
+     const GPGPUInit = useMemo(() => {
           const gpuCompute = new GPUComputationRenderer(width, width, gl)
           const dtPosition = gpuCompute.createTexture()
 
@@ -37,7 +64,7 @@ export default function FBOon() {
                dtPosition
           )
 
-          positionVariable.material.uniforms['time'] = { value: 0 }
+          positionVariable.material.uniforms['time'] = { value: 0.0 }
 
           positionVariable.wrapS = THREE.RepeatWrapping
           positionVariable.wrapT = THREE.RepeatWrapping
@@ -46,27 +73,11 @@ export default function FBOon() {
 
           gpuCompute.init()
 
-          return gpuCompute
+          return { gpuCompute, dtPosition, positionVariable }
      }, [])
 
-     useEffect(() => {
-          // gpuCompute.variables[0].initialValueTexture.image.dat
-     }, [])
 
-     // * ----.
-
-     // $ ----> Main Material / Uniforms / Fill
-
-     const uniforms = useMemo(
-          () => ({
-               time: { value: 0 },
-               positionTexture: { value: null },
-               resolution: { value: new THREE.Vector4() }
-          }),
-          []
-     )
-
-     const particlesPosition = useMemo(() => {
+     const particlesPosition = useCallback(() => {
           const array = new Float32Array(width * width * 3)
           const reference = new Float32Array(width * width * 2)
 
@@ -77,23 +88,20 @@ export default function FBOon() {
                let y = Math.random()
                let z = Math.random()
 
+               array[i * 3 + 0] = x
+               array[i * 3 + 1] = y
+               array[i * 3 + 2] = z
+
                // --> uv
                let xx = (i % width) / width
                let yy = ~~(i / width) / width
 
-               array.set([x, y, z], i * 3)
-               reference.set([xx, yy], i * 2)
-               console.log('2');
+               reference[i * 2 + 0] = xx
+               reference[i * 2 + 1] = yy
           }
 
-          console.log(array)
-          console.log(reference)
-          return {
-               positions: array,
-               reference: reference
-          }
+          return { array, reference }
      }, [])
-
 
      // useEffect(() => {
      // })
@@ -101,19 +109,28 @@ export default function FBOon() {
      // * ----.
 
      useFrame((state) => {
-          gpuCompute.compute()
-          let elapseTime = state.clock.getElapsedTime()
-
-          pointsRef.current.material.uniforms.positionTexture.value =
-               gpuCompute.getCurrentRenderTarget(gpuCompute.variables[0]).texture
-
-          pointsRef.current.geometry.attributes.position.needsUpdate = true
+          
 
           // pointsRef.current.material.uniforms.time.value = elapseTime
+          // GPGPUInit().positionVariable.material.uniforms['time'].value = elapseTime
      })
-     useEffect(() => {
-          console.log(gpuCompute)
-     }, [])
+
+
+     const render = () => {
+
+          
+          if(pointsRef.current){
+               GPGPUInit.gpuCompute.compute()
+               pointsRef.current.material.uniforms.positionTexture.value =
+                    GPGPUInit.gpuCompute.getCurrentRenderTarget(GPGPUInit.positionVariable).texture
+               
+          }
+
+          
+          requestAnimationFrame(render)
+        }
+
+        render()
 
      return (
           <>
@@ -122,20 +139,20 @@ export default function FBOon() {
                          <bufferAttribute
                               attach={'attributes-position'}
                               itemSize={3}
-                              array={particlesPosition.positions}
+                              array={particlesPosition().array}
                               count={width * width}
                          />
                          <bufferAttribute
                               attach={'attributes-reference'}
                               itemSize={2}
                               count={width * width * 2}
-                              array={particlesPosition.reference}
+                              array={particlesPosition().reference}
                          />
                     </bufferGeometry>
                     <shaderMaterial
                          vertexShader={vertexShader}
                          fragmentShader={fragmentShader}
-                         uniforms={uniforms}
+                         uniforms={uniforms()}
                     />
                </points>
           </>
