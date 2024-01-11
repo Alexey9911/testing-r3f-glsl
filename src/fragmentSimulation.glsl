@@ -1,11 +1,9 @@
 uniform sampler2D texturePosition;
 uniform float time;
-// varying vec2 resolution;
 
 void main() {
 
     vec2 uv = gl_FragCoord.xy / resolution.xy;
-    // vec2 uv = gl_FragCoord.xy / 600.;
 
     vec4 tmpPos = texture2D(texturePosition, uv);
 

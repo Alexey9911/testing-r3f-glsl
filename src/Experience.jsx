@@ -1,6 +1,5 @@
 import { OrbitControls } from '@react-three/drei'
-import FBOon from './fboOn'
-import ProtoTipo from './ProtoTipo'
+import GPGPU from './GPGPU'
 
 export default function Experience() {
      return (
@@ -13,7 +12,7 @@ export default function Experience() {
 
 
 
-               <FBOon/>
+               <GPGPU/>
           </>
      )
 }
