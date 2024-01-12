@@ -8,8 +8,8 @@ import * as THREE from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 
-export default function FBOon() {
-     // * ----> Some important Variables
+export default function GPGPU() {
+     // * ---->important Variables
      const width = 32
      const { gl } = useThree()
      const pointsRef = useRef()
@@ -81,11 +81,8 @@ export default function FBOon() {
 
                array.set([x, y, z], i * 3)
                reference.set([xx, yy], i * 2)
-               console.log('2')
           }
 
-          console.log(array)
-          console.log(reference)
           return {
                positions: array,
                reference: reference
